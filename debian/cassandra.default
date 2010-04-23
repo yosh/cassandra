@@ -1,3 +1,4 @@
+ENABLED=0
 
 # Override JAVA_HOME if you are not using the openjdk-6-jre package.
 #JAVA_HOME="/usr/lib/jvm/java-6-openjdk/jre"

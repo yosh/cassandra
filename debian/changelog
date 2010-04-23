@@ -1,3 +1,16 @@
+cassandra (0.6.1-rdio.2) unstable; urgency=low
+
+  * Default to not starting the daemon unless ENABLED=1 in
+  /etc/default/cassandra
+
+ -- Manish Singh <manish@rd.io>  Thu, 22 Apr 2010 03:35:09 -0700
+
+cassandra (0.6.1-rdio.1) unstable; urgency=low
+
+  * Rdio packaging, run as cassandra user
+
+ -- Manish Singh <manish@rd.io>  Wed, 21 Apr 2010 11:36:19 -0700
+
 cassandra (0.6.1) unstable; urgency=low
 
   * New stable point release.

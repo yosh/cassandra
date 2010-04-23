@@ -1,0 +1,11 @@
+#!/bin/sh
+
+set -eu
+
+USER="cassandra"
+GROUP="$USER"
+
+chown $USER:$GROUP /var/lib/cassandra
+chown $USER:$GROUP /var/log/cassandra
+
+#DEBHELPER#
