@@ -16,10 +16,35 @@
 * specific language governing permissions and limitations
 * under the License.
 */
-package org.apache.cassandra.db.commitlog;
+package org.apache.cassandra.utils;
 
-import org.apache.cassandra.concurrent.IExecutorMBean;
+import org.junit.Test;
 
-public interface CommitLogExecutorServiceMBean extends IExecutorMBean
+import static org.junit.Assert.*;
+
+
+public class EstimatedHistogramTest
 {
+    @Test
+    public void testFindingCorrectBuckets()
+    {
+        EstimatedHistogram histogram = new EstimatedHistogram();
+
+        histogram.add(0L);
+        assertEquals(1, histogram.get(true)[0]);
+
+        histogram.add(33282687);
+        assertEquals(1, histogram.get(true)[histogram.buckets.length()-1]);
+
+        histogram.add(1);
+        assertEquals(1, histogram.get(true)[1]);
+
+        histogram.add(9);
+        assertEquals(1, histogram.get(true)[8]);
+
+        histogram.add(23);
+        histogram.add(24);
+        histogram.add(25);
+        assertEquals(3, histogram.get(true)[13]);
+    }
 }
