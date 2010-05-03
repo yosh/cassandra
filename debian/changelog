@@ -1,3 +1,9 @@
+cassandra (0.6.2-rdio.1) unstable; urgency=low
+
+  * 0.6.2 snapshot from 2010-05-03.
+
+ -- Manish Singh <manish@rd.io>  Mon,  5 May 2010 15:17:41 -0700
+
 cassandra (0.6.1-rdio.2) unstable; urgency=low
 
   * Default to not starting the daemon unless ENABLED=1 in
