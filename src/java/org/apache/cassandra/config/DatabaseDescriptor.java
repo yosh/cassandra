@@ -132,6 +132,8 @@ public class DatabaseDescriptor
     private static boolean snapshotBeforeCompaction;
     private static boolean autoBootstrap = false;
 
+    private static boolean hintedHandoffEnabled = true;
+
     private static IAuthenticator authenticator = new AllowAllAuthenticator();
 
     private final static String STORAGE_CONF_FILE = "storage-conf.xml";
@@ -464,6 +466,20 @@ public class DatabaseDescriptor
             String value = xmlUtils.getNodeValue("/Storage/CommitLogRotationThresholdInMB");
             if ( value != null)
                 CommitLog.setSegmentSize(Integer.parseInt(value) * 1024 * 1024);
+
+            /* should Hinted Handoff be on? */
+            String hintedHandOffStr = xmlUtils.getNodeValue("/Storage/HintedHandoffEnabled");
+            if (hintedHandOffStr != null)
+            {
+                if (hintedHandOffStr.equalsIgnoreCase("true"))
+                    hintedHandoffEnabled = true;
+                else if (hintedHandOffStr.equalsIgnoreCase("false"))
+                    hintedHandoffEnabled = false;
+                else
+                    throw new ConfigurationException("Unrecognized value for HintedHandoff.  Use 'true' or 'false'.");
+            }
+            if (logger.isDebugEnabled())
+                logger.debug("setting hintedHandoffEnabled to " + hintedHandoffEnabled);
 
             readTablesFromXml();
             if (tables.isEmpty())
@@ -1208,4 +1224,9 @@ public class DatabaseDescriptor
     {
         return autoBootstrap;
     }
+
+    public static boolean hintedHandoffEnabled()
+    {
+        return hintedHandoffEnabled;
     }
+}
