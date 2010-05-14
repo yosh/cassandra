@@ -2,7 +2,7 @@ cassandra (0.6.2-rdio.2) unstable; urgency=low
 
   * 0.6.2 snapshot from 2010-05-14.
 
- -- Manish Singh <manish@rd.io>  Mon, 14 May 2010 14:21:20 -0700
+ -- Manish Singh <manish@rd.io>  Fri, 14 May 2010 14:21:20 -0700
 
 cassandra (0.6.2-rdio.1) unstable; urgency=low
 
