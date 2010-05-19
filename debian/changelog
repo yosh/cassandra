@@ -1,3 +1,9 @@
+cassandra (0.6.2-rdio.4) unstable; urgency=low
+
+  * init script logic to set number of open files via ulimit
+
+ -- Manish Singh <manish@rd.io>  Mon, 17 May 2010 16:36:54 -0700
+
 cassandra (0.6.2-rdio.3) unstable; urgency=low
 
   * 0.6.2 snapshot from 2010-05-17.
