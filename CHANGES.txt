@@ -12,6 +12,7 @@
    columns (CASSANDRA-1139)
  * avoid preserving login information after client disconnects
    (CASSANDRA-1057)
+ * prefer sun jdk to openjdk in debian init script (CASSANDRA-1174)
  * detect partioner config changes between restarts and fail fast 
    (CASSANDRA-1146)
  * use generation time to resolve node token reassignment disagreements
@@ -19,6 +20,8 @@
  * restructure the startup ordering of Gossiper and MessageService to avoid
    timing anomalies (CASSANDRA-1160)
  * detect incomplete commit log hearders (CASSANDRA-1119)
+ * force anti-entropy service to stream files on the stream stage to avoid
+   sending streams out of order (CASSANDRA-1169)
 
 
 0.6.2
