@@ -1,6 +1,5 @@
 0.6.3
  * retry to make streaming connections up to 8 times. (CASSANDRA-1019)
- * fix potential for duplicate rows seen by Hadoop jobs (CASSANDRA-1042)
  * reject describe_ring() calls on invalid keyspaces (CASSANDRA-1111)
  * fix cache size calculation for size of 100% (CASSANDRA-1129)
  * fix cache capacity only being recalculated once (CASSANDRA-1129)
@@ -29,6 +28,13 @@
  * use midpoint when bootstrapping a new machine into range with not
    much data yet instead of random token (CASSANDRA-1112)
  * kill server on OOM in executor stage as well as Thrift (CASSANDRA-1226)
+ * remove opportunistic repairs, when two machines with overlapping replica
+   responsibilities happen to finish major compactions of the same CF near
+   the same time.  repairs are now fully manual (CASSANDRA-1190)
+ * avoid queuing multiple hint deliveries for the same endpoint
+   (CASSANDRA-1229)
+ * add ability to lower compaction priority (default is no change from 0.6.2)
+   (CASSANDRA-1181)
 
 
 0.6.2
