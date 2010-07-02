@@ -21,31 +21,26 @@ package org.apache.cassandra.db.marshal;
  */
 
 
-import java.io.UnsupportedEncodingException;
+import java.nio.ByteBuffer;
+import java.nio.charset.CharacterCodingException;
+import java.nio.charset.Charset;
+import java.nio.charset.CharsetDecoder;
+import java.util.Arrays;
 
-public class UTF8Type extends AbstractType
+public class UTF8Type extends BytesType
 {
-    public int compare(byte[] o1, byte[] o2)
-    {
-        try
-        {
-            return new String(o1, "UTF-8").compareTo(new String(o2, "UTF-8"));
-        }
-        catch (UnsupportedEncodingException e)
-        {
-            throw new RuntimeException(e);
-        }
-    }
+    private static final Charset UTF_8 = Charset.forName("UTF-8");
 
     public String getString(byte[] bytes)
     {
+        CharsetDecoder utf8Decoder = UTF_8.newDecoder();
         try
         {
-            return new String(bytes, "UTF-8");
+            return utf8Decoder.decode(ByteBuffer.wrap(bytes)).toString();
         }
-        catch (UnsupportedEncodingException e)
+        catch (CharacterCodingException e)
         {
-            throw new RuntimeException(e);
+            throw new MarshalException("invalid UTF8 bytes " + Arrays.toString(bytes));
         }
     }
 }
