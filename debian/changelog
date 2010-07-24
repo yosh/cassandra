@@ -1,3 +1,9 @@
+cassandra (0.6.3-rdio.1) unstable; urgency=low
+
+  * 0.6.4 snapshot from 2010-07-24
+
+ -- Manish Singh <manish@rd.io>  Sat, 24 Jul 2010 12:13:03 -0700
+
 cassandra (0.6.3) unstable; urgency=low
 
   * New stable point release.
