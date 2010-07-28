@@ -20,6 +20,7 @@ package org.apache.cassandra.service;
 
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
+import java.io.IOError;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -33,6 +34,7 @@ import org.apache.cassandra.db.RowMutation;
 import org.apache.cassandra.db.RowMutationMessage;
 import java.net.InetAddress;
 import org.apache.cassandra.net.Message;
+import org.apache.cassandra.net.MessagingService;
 import org.apache.cassandra.utils.FBUtilities;
 import org.apache.cassandra.config.DatabaseDescriptor;
 
@@ -67,8 +69,8 @@ public class ReadResponseResolver implements IResponseResolver<Row>
 	public Row resolve(Collection<Message> responses) throws DigestMismatchException, IOException
     {
         long startTime = System.currentTimeMillis();
-		List<ColumnFamily> versions = new ArrayList<ColumnFamily>();
-		List<InetAddress> endPoints = new ArrayList<InetAddress>();
+		List<ColumnFamily> versions = new ArrayList<ColumnFamily>(responses.size());
+		List<InetAddress> endPoints = new ArrayList<InetAddress>(responses.size());
 		String key = null;
 		byte[] digest = new byte[0];
 		boolean isDigestQuery = false;
@@ -135,7 +137,16 @@ public class ReadResponseResolver implements IResponseResolver<Row>
             RowMutation rowMutation = new RowMutation(table, key);
             rowMutation.add(diffCf);
             RowMutationMessage rowMutationMessage = new RowMutationMessage(rowMutation);
-            ReadRepairManager.instance.schedule(endPoints.get(i), rowMutationMessage);
+            Message repairMessage;
+            try
+            {
+                repairMessage = rowMutationMessage.makeRowMutationMessage(StorageService.Verb.READ_REPAIR);
+            }
+            catch (IOException e)
+            {
+                throw new IOError(e);
+            }
+            MessagingService.instance.sendOneWay(repairMessage, endPoints.get(i));
         }
     }
 
