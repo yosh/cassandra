@@ -17,6 +17,15 @@
  * cassandra-cli.bat works on windows (CASSANDRA-1236)
  * pre-emptively drop requests that cannot be processed within RPCTimeout
    (CASSANDRA-685)
+ * add ack to Binary write verb and update CassandraBulkLoader
+   to wait for acks for each row (CASSANDRA-1093)
+ * remove gossip message size limit (CASSANDRA-1138)
+ * parallelize local and remote reads during multiget, and respect snitch 
+   when determining whether to do local read for CL.ONE (CASSANDRA-1317)
+ * fix read repair to use requested consistency level on digest mismatch,
+   rather than assuming QUORUM (CASSANDRA-1316)
+ * process digest mismatch re-reads in parallel (CASSANDRA-1323)
+ * switch hints CF comparator to BytesType (CASSANDRA-1274)
 
 
 0.6.3
