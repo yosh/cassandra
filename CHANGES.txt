@@ -6,6 +6,13 @@
  * fix compilation on non-sun JKDs (CASSANDRA-1061)
  * remove String.trim() call on row keys in batch mutations (CASSANDRA-1235)
  * Log summary of dropped messages instead of spamming log (CASSANDRA-1284)
+ * Dynamic snitch (CASSANDRA-981)
+ * Use a regex to filter keyspace and column family names during
+   initialization (CASSANDRA-1377)
+ * fix errors in hard-coded bloom filter optKPerBucket by computing it
+   algorithmically (CASSANDRA-1220
+ * remove message deserialization stage, and uncap read/write stages
+   so slow reads/writes don't block gossip processing (CASSANDRA-1358)
 
 
 0.6.4

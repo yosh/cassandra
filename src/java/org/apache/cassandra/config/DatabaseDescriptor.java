@@ -27,6 +27,7 @@ import org.apache.cassandra.db.marshal.BytesType;
 import org.apache.cassandra.db.marshal.UTF8Type;
 import org.apache.cassandra.dht.IPartitioner;
 import org.apache.cassandra.locator.IEndPointSnitch;
+import org.apache.cassandra.locator.DynamicEndpointSnitch;
 import org.apache.cassandra.locator.AbstractReplicationStrategy;
 import org.apache.cassandra.io.util.FileUtils;
 import org.apache.cassandra.utils.FBUtilities;
@@ -154,8 +155,6 @@ public class DatabaseDescriptor
             return scpurl.getFile();
         throw new RuntimeException("Cannot locate " + STORAGE_CONF_FILE + " via storage-config system property or classpath lookup.");
     }
-
-    private static int stageQueueSize_ = 4096;
 
     static
     {
@@ -589,6 +588,8 @@ public class DatabaseDescriptor
                 {
                     throw new ConfigurationException("'system' is a reserved table name for Cassandra internals");
                 }
+                if (!ksName.matches("\\w+"))
+                    throw new ConfigurationException("keyspace name contains invalid char");
 
                 /* See which replica placement strategy to use */
                 String replicaPlacementStrategyClassName = xmlUtils.getNodeValue("/Storage/Keyspaces/Keyspace[@Name='" + ksName + "']/ReplicaPlacementStrategy");
@@ -626,7 +627,12 @@ public class DatabaseDescriptor
                 try
                 {
                     Class cls = Class.forName(endPointSnitchClassName);
-                    epSnitch = (IEndPointSnitch)cls.getConstructor().newInstance();
+                    IEndPointSnitch snitch = (IEndPointSnitch)cls.getConstructor().newInstance();
+                    String dynamic = System.getProperty("cassandra.dynamic_snitch");
+                    if (dynamic == null || Boolean.getBoolean(dynamic) == false)
+                        epSnitch = snitch;
+                    else
+                        epSnitch = new DynamicEndpointSnitch(snitch);
                 }
                 catch (ClassNotFoundException e)
                 {
@@ -648,7 +654,6 @@ public class DatabaseDescriptor
                 {
                     throw new ConfigurationException("Invalid endpointsnitch class " + endPointSnitchClassName + " " + e.getMessage());
                 }
-
                 String xqlTable = "/Storage/Keyspaces/Keyspace[@Name='" + ksName + "']/";
                 NodeList columnFamilies = xmlUtils.getRequestedNodeList(xqlTable + "ColumnFamily");
 
@@ -666,9 +671,9 @@ public class DatabaseDescriptor
                     {
                         throw new ConfigurationException("ColumnFamily name attribute is required");
                     }
-                    if (cfName.contains("-"))
+                    if (!cfName.matches("\\w+"))
                     {
-                        throw new ConfigurationException("ColumnFamily names cannot contain hyphens");
+                        throw new ConfigurationException("ColumnFamily name contains invalid characters.");
                     }
                     String xqlCF = xqlTable + "ColumnFamily[@Name='" + cfName + "']/";
 
@@ -1105,11 +1110,6 @@ public class DatabaseDescriptor
     {
         assert tableName != null;
         return getCFMetaData(tableName, cfName).subcolumnComparator;
-    }
-
-    public static int getStageQueueSize()
-    {
-        return stageQueueSize_;
     }
 
     /**
